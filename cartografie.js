@@ -99,8 +99,8 @@ d3.tsv("countries.tsv", function(error, data) {
 		return size(+d.funds);
 	})
 	.attr("fill", d=> { return color(+d.vuln); })
-	.attr("stroke", "#0A0101")
-	.attr("stroke-width", 0.7)
+	// .attr("stroke", "#0A0101")
+	// .attr("stroke-width", 0.7)
 	.on("mouseover", d => {
 		
 		d3.select("#tooltip").append("p")
@@ -129,15 +129,14 @@ d3.tsv("countries.tsv", function(error, data) {
     	}
     })
     .style("text-anchor", "middle")
-    .style("fill", "var(--dark)")
-    .style("font-family", "var(--font-family-monospace)")
+    .style("fill", "var(--white)")
     .style("font-size", "0.6rem");
 
 	function tick(e) {
 		node.attr("x", function(d) { return d.x - d.r; })
 			.attr("y", function(d) { return d.y - d.r; });
 
-		label.attr("x", function(d) { return d.x - ( d.r / 2 ); })
+		label.attr("x", function(d) { return d.x - ( d.r * 0.5 ); })
     		.attr("y", function(d) { return d.y + 12; });
 	}
 
