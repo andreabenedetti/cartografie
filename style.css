@@ -1,16 +1,65 @@
-body {
-	background: snow;
+@font-face {
+	font-family: "Aileron";
+	font-weight: 300;
+	src: url("../fonts/Aileron-Regular.otf");
 }
 
-rect:hover {
+@font-face {
+	font-family: "Aileron";
+	font-weight: 300;
+	font-style: italic;
+	src: url("../fonts/Aileron-Italic.otf");
+}
+
+@font-face {
+	font-family: "Aileron";
+	font-weight: 500;
+	src: url("../fonts/Aileron-Bold.otf");
+}
+
+@font-face {
+	font-family: "Aileron";
+	font-weight: 500;
+	font-style: italic;
+	src: url("../fonts/Aileron-BoldItalic.otf");
+}
+
+@font-face {
+	font-family: "Aileron";
+	font-weight: 700;
+	src: url("../fonts/Aileron-Black.otf");
+}
+
+@font-face {
+	font-family: "Aileron";
+	font-weight: 700;
+	font-style: italic;
+	src: url("../fonts/Aileron-BlackItalic.otf");
+}
+
+body {
+	background: snow;
+	font-family: "Aileron";
+	font-weight: 300;
+	color: #0A0101;
+	padding-top: 2rem;
+}
+
+#cartogramma {
+	margin-top: 5rem;
+}
+
+.rect:hover {
 	cursor: pointer;
 }
 
+.label {
+	pointer-events: none;
+}
+
 #tooltip {
-	position: fixed;
-	left: 1rem;
-	top: 1rem;
-	font-family: "Arimo";
+	position: absolute;
+	margin-top: 3rem;
 }
 
 #tooltip p {
@@ -25,4 +74,15 @@ rect:hover {
 
 #tooltip .funds {
 	font-size: 1.2rem;
+}
+
+#tooltip .vuln {
+	font-size: .8rem;
+	text-transform: uppercase;
+}
+
+footer {
+	font-weight: 700;
+	padding: 3rem 0;
+	background: rgba(0,0,0,.02);
 }

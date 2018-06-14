@@ -1,6 +1,6 @@
 let margin = 10,
 w = window.innerWidth - margin,
-h = window.innerHeight - margin;
+h = window.innerHeight * 0.9 - margin;
 
 let cartogramma = d3.selectAll("#cartogramma")
 .append("svg")
@@ -9,12 +9,12 @@ let cartogramma = d3.selectAll("#cartogramma")
 	height: h
 })
 
-let projection = d3.geoEquirectangular();
+let projection = d3.geoMercator();
 let path = d3.geoPath()
 .projection(projection);
 
 let size = d3.scaleLinear()
-.range([2,40]);
+.range([3,60]);
 
 let interpolators = [
     // These are from d3-scale.
@@ -57,7 +57,7 @@ d3.tsv("countries.tsv", function(error, data) {
       }));
 
 	color.domain(d3.extent(data, function(d) {
-        return +d.funds;
+        return +d.vuln;
       }));
 
 	projection.scale(180)
@@ -76,6 +76,7 @@ d3.tsv("countries.tsv", function(error, data) {
 			id: d.id,
 			name: d.country,
 			funds: d.funds,
+			vuln: d.vuln,
 			r: size(value),
 			value: value
 		};
@@ -92,19 +93,40 @@ d3.tsv("countries.tsv", function(error, data) {
 	let node = cartogramma.selectAll("rect")
 	.data(nodes)
 	.enter().append("rect")
+	.classed("rect", true)
 	.attr("width", d=>{ 
 		return size(+d.funds);
 	})
 	.attr("height", d=>{ 
 		return size(+d.funds);
 	})
-	.attr("fill", d=> { return color(+d.funds); })
-	.attr("stroke", "#0A0101");
+	.attr("fill", d=> { return color(+d.vuln); })
+	.attr("stroke", "#0A0101")
+	.attr("stroke-width", 0.7)
+	.on("mouseover", d => {
+		
+		d3.select("#tooltip").append("p")
+		.classed("country", true)
+		.text(d.name);
+
+		d3.select("#tooltip").append("p")
+		.classed("funds", true)
+		.text(Math.round(d.funds) + " milioni di dollari");
+
+		d3.select("#tooltip").append("p")
+		.classed("vuln", true)
+		.text("vuln. index: " + d.vuln);
+
+	})
+	.on("mouseleave", d => {
+		d3.selectAll("#tooltip p").remove()
+	});
 
 	let label = cartogramma.selectAll(null)
     .data(nodes)
     .enter()
     .append("text")
+    .classed("label", true)
     .text(d=> { 
     	if(d.funds == 0) {
     		return " ";
@@ -148,21 +170,5 @@ d3.tsv("countries.tsv", function(error, data) {
 			}
 		}
 	}
-
-	console.log(nodes);
-
-	d3.selectAll("rect").on("mouseenter", d=> {
-		d3.select("#tooltip").append("p")
-		.classed("country", true)
-		.text(d.name);
-
-		d3.select("#tooltip").append("p")
-		.classed("funds", true)
-		.text(Math.round(d.funds) + " million USD");
-	});
-
-	d3.selectAll("rect").on("mouseleave", d=> {
-		d3.selectAll("#tooltip p").remove()
-	});
 
 });
