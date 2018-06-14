@@ -69,7 +69,7 @@ d3.tsv("countries.tsv", function(error, data) {
     .append("text")
     .text(d=> { return d.id; })
     .style("text-anchor", "middle")
-    .style("fill", "#555")
+    .style("fill", "#0A0101")
     .style("font-family", "Arial")
     .style("font-size", 10);
 
