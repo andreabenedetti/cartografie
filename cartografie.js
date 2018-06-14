@@ -1,20 +1,18 @@
 let margin = 10,
-w = window.innerWidth - margin,
-h = window.innerHeight * 0.9 - margin;
+width = window.innerWidth - margin,
+height = window.innerHeight * 0.9 - margin;
 
 let cartogramma = d3.selectAll("#cartogramma")
 .append("svg")
 .attrs({
-	width: w,
-	height: h
+	width: width,
+	height: height
 })
 
 let projection = d3.geoMercator();
-let path = d3.geoPath()
-.projection(projection);
 
-let size = d3.scaleLinear()
-.range([3,60]);
+let size = d3.scaleSqrt()
+.range([4,50]);
 
 let interpolators = [
     // These are from d3-scale.
@@ -47,7 +45,7 @@ let interpolators = [
     "YlOrRd"
     ];
 
-let color = d3.scaleSequential(d3.interpolateRdPu);
+let color = d3.scaleSequential(d3.interpolateMagma);
 
 d3.tsv("countries.tsv", function(error, data) {
 	if (error) throw error;
@@ -60,8 +58,8 @@ d3.tsv("countries.tsv", function(error, data) {
         return +d.vuln;
       }));
 
-	projection.scale(180)
-	.translate([w / 2, h / 2]);
+	projection.scale(190)
+	.translate([width / 2, height / 2]);
 
 	console.log("inizio");
 	// console.log(JSON.stringify(data, null, "\t"));
@@ -111,11 +109,7 @@ d3.tsv("countries.tsv", function(error, data) {
 
 		d3.select("#tooltip").append("p")
 		.classed("funds", true)
-		.text(Math.round(d.funds) + " milioni di dollari");
-
-		d3.select("#tooltip").append("p")
-		.classed("vuln", true)
-		.text("vuln. index: " + d.vuln);
+		.text(Math.ceil(d.funds) + " milioni di dollari");
 
 	})
 	.on("mouseleave", d => {
@@ -135,9 +129,9 @@ d3.tsv("countries.tsv", function(error, data) {
     	}
     })
     .style("text-anchor", "middle")
-    .style("fill", "#0A0101")
-    .style("font-family", "Arimo")
-    .style("font-size", 10);
+    .style("fill", "var(--dark)")
+    .style("font-family", "var(--font-family-monospace)")
+    .style("font-size", "0.6rem");
 
 	function tick(e) {
 		node.attr("x", function(d) { return d.x - d.r; })
