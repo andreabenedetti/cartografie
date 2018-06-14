@@ -9,22 +9,58 @@ let cartogramma = d3.selectAll("#cartogramma")
 	height: h
 })
 
-let projection = d3.geoConicEquidistant();
+let projection = d3.geoEquirectangular();
 let path = d3.geoPath()
 .projection(projection);
 
-let size = d3.scaleSqrt()
-.range([5,50]);
+let size = d3.scaleLinear()
+.range([2,40]);
+
+let interpolators = [
+    // These are from d3-scale.
+    "Viridis",
+    "Inferno",
+    "Magma",
+    "Plasma",
+    "Warm",
+    "Cool",
+    "Rainbow",
+    "CubehelixDefault",
+    // These are from d3-scale-chromatic
+    "Blues",
+    "Greens",
+    "Greys",
+    "Oranges",
+    "Purples",
+    "Reds",
+    "BuGn",
+    "BuPu",
+    "GnBu",
+    "OrRd",
+    "PuBuGn",
+    "PuBu",
+    "PuRd",
+    "RdPu",
+    "YlGnBu",
+    "YlGn",
+    "YlOrBr",
+    "YlOrRd"
+    ];
+
+let color = d3.scaleSequential(d3.interpolateRdPu);
 
 d3.tsv("countries.tsv", function(error, data) {
 	if (error) throw error;
 
 	size.domain(d3.extent(data, function(d) {
-		console.log(+d.funds)
         return +d.funds;
       }));
 
-	projection.scale(250)
+	color.domain(d3.extent(data, function(d) {
+        return +d.funds;
+      }));
+
+	projection.scale(180)
 	.translate([w / 2, h / 2]);
 
 	console.log("inizio");
@@ -61,19 +97,25 @@ d3.tsv("countries.tsv", function(error, data) {
 	})
 	.attr("height", d=>{ 
 		return size(+d.funds);
-	});
+	})
+	.attr("fill", d=> { return color(+d.funds); })
+	.attr("stroke", "#0A0101");
 
 	let label = cartogramma.selectAll(null)
     .data(nodes)
     .enter()
     .append("text")
-    .text(d=> { return d.id; })
+    .text(d=> { 
+    	if(d.funds == 0) {
+    		return " ";
+    	} else {
+    		return d.id;
+    	}
+    })
     .style("text-anchor", "middle")
     .style("fill", "#0A0101")
-    .style("font-family", "Arial")
+    .style("font-family", "Arimo")
     .style("font-size", 10);
-
-    console.log(label);
 
 	function tick(e) {
 		node.attr("x", function(d) { return d.x - d.r; })
@@ -110,7 +152,17 @@ d3.tsv("countries.tsv", function(error, data) {
 	console.log(nodes);
 
 	d3.selectAll("rect").on("mouseenter", d=> {
-		console.log(d.name)
+		d3.select("#tooltip").append("p")
+		.classed("country", true)
+		.text(d.name);
+
+		d3.select("#tooltip").append("p")
+		.classed("funds", true)
+		.text(Math.round(d.funds) + " million USD");
+	});
+
+	d3.selectAll("rect").on("mouseleave", d=> {
+		d3.selectAll("#tooltip p").remove()
 	});
 
 });

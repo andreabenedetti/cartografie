@@ -1,3 +1,28 @@
 body {
 	background: snow;
 }
+
+rect:hover {
+	cursor: pointer;
+}
+
+#tooltip {
+	position: fixed;
+	left: 1rem;
+	top: 1rem;
+	font-family: "Arimo";
+}
+
+#tooltip p {
+	margin-bottom: 0.2rem;
+}
+
+#tooltip .country {
+	text-transform: uppercase;
+	font-size: 0.9rem;
+	font-weight: bold;
+}
+
+#tooltip .funds {
+	font-size: 1.2rem;
+}
