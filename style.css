@@ -38,14 +38,14 @@
 }
 
 body {
-	background: black;
+	background: var(--light);
 	font-family: var(--font-family-sans-serif);
-	color: var(--white);
+	color: black;
 	padding-top: 2rem;
 }
 
 h1, h2, h3, h4, h5 {
-	color: var(--light);
+	color: var(--dark);
 }
 
 h1 {
@@ -64,6 +64,14 @@ a:hover {
 	margin-top: 5rem;
 }
 
+.escape:hover {
+	cursor: pointer;
+}
+
+.rect {
+	transition: opacity 0.2s ease;
+}
+
 .rect:hover {
 	cursor: pointer;
 }
@@ -74,7 +82,7 @@ a:hover {
 
 #tooltip {
 	position: absolute;
-	margin-top: 3rem;
+	margin-top: 8rem;
 }
 
 #tooltip p {
@@ -99,5 +107,4 @@ a:hover {
 
 footer {
 	padding: 3rem 0;
-	background: rgba(0,0,0,.02);
 }

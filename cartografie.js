@@ -1,20 +1,21 @@
-let margin = 10,
-width = window.innerWidth - margin,
-height = window.innerHeight * 0.9 - margin;
+$( document ).ready(function() {
 
-let cartogramma = d3.selectAll("#cartogramma")
-.append("svg")
-.attrs({
-	width: width,
-	height: height
-})
+	let margin = 10,
+	width = window.innerWidth,
+	height = window.innerHeight * 0.9 - margin;
 
-let projection = d3.geoMercator();
+	let cartogramma = d3.select("#cartogramma")
+	.append("svg")
+	.attr("width", width)
+	.attr("height", height)
+	.style("background", "rgba(0,0,0,.02");
 
-let size = d3.scaleSqrt()
-.range([4,50]);
+	let projection = d3.geoMercator();
 
-let interpolators = [
+	let size = d3.scaleSqrt()
+	.range([4,60]);
+
+	let interpolators = [
     // These are from d3-scale.
     "Viridis",
     "Inferno",
@@ -45,23 +46,23 @@ let interpolators = [
     "YlOrRd"
     ];
 
-let color = d3.scaleSequential(d3.interpolateMagma);
+    let color = d3.scaleSequential(d3.interpolateWarm);
 
-d3.tsv("countries.tsv", function(error, data) {
-	if (error) throw error;
+    d3.tsv("countries.tsv", function(error, data) {
+    	if (error) throw error;
 
-	size.domain(d3.extent(data, function(d) {
-        return +d.funds;
-      }));
+    	size.domain(d3.extent(data, function(d) {
+    		return +d.funds;
+    	}));
 
-	color.domain(d3.extent(data, function(d) {
-        return +d.vuln;
-      }));
+    	color.domain(d3.extent(data, function(d) {
+    		return +d.vuln;
+    	}));
 
-	projection.scale(190)
-	.translate([width / 2, height / 2]);
+    	projection.scale(190)
+    	.translate([width / 2, height / 2]);
 
-	console.log("inizio");
+    	console.log("inizio");
 	// console.log(JSON.stringify(data, null, "\t"));
 
 	let nodes = data
@@ -88,9 +89,11 @@ d3.tsv("countries.tsv", function(error, data) {
 	.nodes(nodes)
 	.on("tick", tick);
 
-	let node = cartogramma.selectAll("rect")
+	let node = cartogramma.selectAll(".rect")
 	.data(nodes)
-	.enter().append("rect")
+
+	let countryRect = node.enter()
+	.append("rect")
 	.classed("rect", true)
 	.attr("width", d=>{ 
 		return size(+d.funds);
@@ -101,45 +104,51 @@ d3.tsv("countries.tsv", function(error, data) {
 	.attr("fill", d=> { return color(+d.vuln); })
 	// .attr("stroke", "#0A0101")
 	// .attr("stroke-width", 0.7)
-	.on("mouseover", d => {
-		
+	.on("mouseenter", function(d) {
+
+		d3.selectAll(".rect").style("opacity", 0.2);
+		d3.select(this).style("opacity", 1);
+
 		d3.select("#tooltip").append("p")
 		.classed("country", true)
 		.text(d.name);
 
 		d3.select("#tooltip").append("p")
 		.classed("funds", true)
-		.text(Math.ceil(d.funds) + " milioni di dollari");
+		.text(Math.ceil(d.funds) + " mil. di dollari");
 
 	})
-	.on("mouseleave", d => {
-		d3.selectAll("#tooltip p").remove()
+	.on("mouseleave", function(d) {
+		d3.selectAll(".rect").style("opacity", 1);
+		d3.selectAll("#tooltip p").remove();
 	});
 
-	let label = cartogramma.selectAll(null)
-    .data(nodes)
-    .enter()
-    .append("text")
-    .classed("label", true)
-    .text(d=> { 
-    	if(d.funds == 0) {
-    		return " ";
-    	} else {
-    		return d.id;
-    	}
-    })
-    .style("text-anchor", "middle")
-    .style("fill", "var(--white)")
-    .style("font-size", "0.6rem");
+	let label = cartogramma.selectAll(".label")
+	.data(nodes)
+	.enter()
+	.append("text")
+	.classed("label", true)
+	.text(d=> { 
+		if(d.funds == 0) {
+			return " ";
+		} else {
+			return d.id;
+		}
+	})
+	.style("text-anchor", "middle")
+	.style("fill", "var(--dark)")
+	.style("font-size", "0.6rem");
 
-	function tick(e) {
-		node.attr("x", function(d) { return d.x - d.r; })
-			.attr("y", function(d) { return d.y - d.r; });
+    // tick function
+    function tick(e) {
+    	countryRect.attr("x", function(d) { return d.x - d.r; })
+    	.attr("y", function(d) { return d.y - d.r; });
 
-		label.attr("x", function(d) { return d.x - ( d.r * 0.5 ); })
-    		.attr("y", function(d) { return d.y + 12; });
-	}
+    	label.attr("x", function(d) { return d.x - ( d.r * 0.5 ); })
+    	.attr("y", function(d) { return d.y + 12; });
+    }
 
+	// anti-collision for rectangles by mike bostock
 	function collide() {
 		for (var k = 0, iterations = 4, strength = 0.5; k < iterations; ++k) {
 			for (var i = 0, n = nodes.length; i < n; ++i) {
@@ -163,5 +172,7 @@ d3.tsv("countries.tsv", function(error, data) {
 			}
 		}
 	}
+
+});
 
 });
