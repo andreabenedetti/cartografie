@@ -165,7 +165,7 @@ $( document ).ready(function() {
 
     		d3.select("#tooltip").append("p")
     		.classed("escape", true)
-    		.text("x")
+    		.text("✕")
     		.on("click", function(d) {
     			d3.selectAll(".rect").style("opacity", 1);
     			d3.selectAll("#tooltip p").remove();
