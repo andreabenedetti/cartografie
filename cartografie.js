@@ -120,8 +120,8 @@ $( document ).ready(function() {
     		d3.select(this).style("opacity", 1);
 
     		let glyph = d3.select("#tooltip").append("svg")
-    		.attr("width", 60)
-    		.attr("height", 60)
+    		.attr("width", 62)
+    		.attr("height", 62)
 
     		if (extent.length > 2) {
     			extent.shift();
@@ -160,8 +160,8 @@ $( document ).ready(function() {
     			}
 
     		})
-    		.attr("x", 0)
-    		.attr("y", 0);
+    		.attr("x", 1)
+    		.attr("y", 1);
 
     		d3.select("#tooltip").append("p")
     		.classed("escape", true)
