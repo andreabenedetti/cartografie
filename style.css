@@ -64,10 +64,6 @@ a:hover {
 	margin-top: 5rem;
 }
 
-.escape:hover {
-	cursor: pointer;
-}
-
 .rect {
 	transition: opacity 0.2s ease;
 }
@@ -83,6 +79,7 @@ a:hover {
 #tooltip {
 	position: absolute;
 	margin-top: 8rem;
+	cursor: default;
 }
 
 #tooltip p {
@@ -103,6 +100,19 @@ a:hover {
 #tooltip .vuln {
 	font-size: .8rem;
 	text-transform: uppercase;
+}
+
+.escape {
+	position: absolute;
+	left: -1rem;
+	text-transform: uppercase;
+	font-size: 0.9rem;
+	font-weight: bold;
+	color: var(--danger);
+}
+
+.escape:hover {
+	cursor: pointer;
 }
 
 footer {

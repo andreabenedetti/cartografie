@@ -63,81 +63,140 @@ $( document ).ready(function() {
     	.translate([width / 2, height / 2]);
 
     	console.log("inizio");
-	// console.log(JSON.stringify(data, null, "\t"));
+    	// console.log(JSON.stringify(data, null, "\t"));
 
-	let nodes = data
-	.map(d=> {
-		let point = projection([d.lon, d.lat]);
-		let value = +d.funds;
-		return {
-			x: point[0], y: point[1],
-			x0: point[0], y0: point[1],
-			id: d.id,
-			name: d.country,
-			funds: d.funds,
-			vuln: d.vuln,
-			r: size(value),
-			value: value
-		};
-	});
+    	let nodes = data
+    	.map(d=> {
+    		let point = projection([d.lon, d.lat]);
+    		let value = +d.funds;
+    		return {
+    			x: point[0], y: point[1],
+    			x0: point[0], y0: point[1],
+    			id: d.id,
+    			name: d.country,
+    			funds: d.funds,
+    			vuln: d.vuln,
+    			r: size(value),
+    			value: value
+    		};
+    	});
 
-	let simulation = d3.forceSimulation()
-	.force("x", d3.forceX(function(d) { return d.x0; }))
-	.force("y", d3.forceY(function(d) { return d.y0; }))
-	// .force("collide", d3.forceCollide( d=> { return size(+d.funds) } ))
-	.force("collide", collide)
-	.nodes(nodes)
-	.on("tick", tick);
+    	let extent = d3.extent(data, function(d) {
+    		return +d.funds;
+    	});
 
-	let node = cartogramma.selectAll(".rect")
-	.data(nodes)
+    	extent = extent.map(d=> {
+    		return {
+    			funds: d,
+    			vuln: null
+    		};
+    	});
 
-	let countryRect = node.enter()
-	.append("rect")
-	.classed("rect", true)
-	.attr("width", d=>{ 
-		return size(+d.funds);
-	})
-	.attr("height", d=>{ 
-		return size(+d.funds);
-	})
-	.attr("fill", d=> { return color(+d.vuln); })
-	// .attr("stroke", "#0A0101")
-	// .attr("stroke-width", 0.7)
-	.on("mouseenter", function(d) {
+    	let simulation = d3.forceSimulation()
+    	.force("x", d3.forceX(function(d) { return d.x0; }))
+    	.force("y", d3.forceY(function(d) { return d.y0; }))
+    	.force("collide", collide)
+    	.nodes(nodes)
+    	.on("tick", tick);
 
-		d3.selectAll(".rect").style("opacity", 0.2);
-		d3.select(this).style("opacity", 1);
+    	let node = cartogramma.selectAll(".rect")
+    	.data(nodes)
 
-		d3.select("#tooltip").append("p")
-		.classed("country", true)
-		.text(d.name);
+    	let countryRect = node.enter()
+    	.append("rect")
+    	.classed("rect", true)
+    	.attr("width", d=>{ 
+    		return size(+d.funds);
+    	})
+    	.attr("height", d=>{ 
+    		return size(+d.funds);
+    	})
+    	.attr("fill", d=> { return color(+d.vuln); })
+    	.on("click", function(d) {
+    		d3.selectAll("#tooltip p").remove();
+    		d3.selectAll("#tooltip svg").remove();
 
-		d3.select("#tooltip").append("p")
-		.classed("funds", true)
-		.text(Math.ceil(d.funds) + " mil. di dollari");
+    		d3.selectAll(".rect").style("opacity", 0.2);
+    		d3.select(this).style("opacity", 1);
 
-	})
-	.on("mouseleave", function(d) {
-		d3.selectAll(".rect").style("opacity", 1);
-		d3.selectAll("#tooltip p").remove();
-	});
+    		let glyph = d3.select("#tooltip").append("svg")
+    		.attr("width", 60)
+    		.attr("height", 60)
 
-	let label = cartogramma.selectAll(".label")
-	.data(nodes)
-	.enter()
-	.append("text")
-	.classed("label", true)
-	.text(d=> { 
-		if(d.funds == 0) {
-			return " ";
-		} else {
-			return d.id;
-		}
-	})
-	.style("text-anchor", "middle")
-	.style("fill", "var(--dark)")
-	.style("font-size", "0.6rem");
+    		if (extent.length > 2) {
+    			extent.shift();
+    		}
+
+    		extent.unshift({ funds: d.funds, vuln: d.vuln });
+
+    		console.log(extent);
+
+    		glyph.selectAll(".rect")
+    		.data(extent)
+    		.enter()
+    		.append("rect")
+    		.classed("rect", true)
+    		.attr("width", function(f) { 
+    			return size(f.funds);
+    		})
+    		.attr("height", function(f) { 
+    			return size(f.funds);
+    		})
+    		.attr("fill", f => { 
+
+    			if (f.vuln == null) {
+    				return "none";
+    			}else {
+    				return color(+f.vuln);
+    			}
+
+    		})
+    		.attr("stroke", f => {
+
+    			if (f.vuln == null) {
+    				return "black";
+    			}else {
+    				return "none";
+    			}
+
+    		})
+    		.attr("x", 0)
+    		.attr("y", 0);
+
+    		d3.select("#tooltip").append("p")
+    		.classed("escape", true)
+    		.text("x")
+    		.on("click", function(d) {
+    			d3.selectAll(".rect").style("opacity", 1);
+    			d3.selectAll("#tooltip p").remove();
+    			d3.selectAll("#tooltip svg").remove();
+    		});;
+
+    		d3.select("#tooltip").append("p")
+    		.classed("country", true)
+    		.text(d.name);
+
+    		d3.select("#tooltip").append("p")
+    		.classed("funds", true)
+    		.text(Math.ceil(d.funds) + " mil. di dollari");
+
+    	});
+
+    	let label = cartogramma.selectAll(".label")
+    	.data(nodes)
+    	.enter()
+    	.append("text")
+    	.classed("label", true)
+    	.text(d=> { 
+    		if(d.funds == 0) {
+    			return " ";
+    		} else {
+    			return d.id;
+    		}
+    	})
+    	.style("text-anchor", "middle")
+    	.style("fill", "var(--dark)")
+    	.style("font-size", "0.6rem");
 
     // tick function
     function tick(e) {
