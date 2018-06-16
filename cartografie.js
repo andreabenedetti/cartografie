@@ -10,7 +10,7 @@ $( document ).ready(function() {
 	.attr("height", height)
 	.style("background", "rgba(0,0,0,.02");
 
-	let projection = d3.geoConicEqualArea()
+	let projection = d3.geoEquirectangular()
 	.fitSize([width, height], cartogramma);
 
 	let size = d3.scaleSqrt()
@@ -151,7 +151,7 @@ $( document ).ready(function() {
     		d3.selectAll(".rect").style("opacity", 0.2);
     		d3.select(this).style("opacity", 1);
 
-    		let glyph = d3.select("#tooltip").append("svg")
+    		let glifo = d3.select("#tooltip").append("svg")
     		.classed("glyph", true)
     		.attr("width", 62)
     		.attr("height", 62)
@@ -164,7 +164,7 @@ $( document ).ready(function() {
 
     		console.log(extent);
 
-    		glyph.selectAll(".rect")
+    		glifo.selectAll(".rect")
     		.data(extent)
     		.enter()
     		.append("rect")
