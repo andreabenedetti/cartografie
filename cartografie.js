@@ -2,7 +2,7 @@ $( document ).ready(function() {
 
 	let margin = 10,
 	width = window.innerWidth,
-	height = window.innerHeight * 0.9 - margin;
+	height = window.innerHeight - margin;
 
 	let cartogramma = d3.select("#cartogramma")
 	.append("svg")
@@ -46,7 +46,17 @@ $( document ).ready(function() {
     "YlOrRd"
     ];
 
-    let color = d3.scaleSequential(d3.interpolateWarm);
+    // let color = d3.scaleSequential(d3.interpolateRdPu);
+    let color = d3.scaleLinear()
+    .interpolate(d3.interpolateRgb)
+    .range([d3.rgb("#59c9a5"), d3.rgb('#FF495D')])
+    .domain([0,100]);
+
+    // let colorScale = d3.scaleSequential(d3.interpolateRdPu)
+    let colorScale = d3.scaleLinear()
+    .interpolate(d3.interpolateRgb)
+    .range([d3.rgb("#59c9a5"), d3.rgb('#FF495D')])
+    .domain([0,100]);
 
     d3.tsv("countries.tsv", function(error, data) {
     	if (error) throw error;
@@ -58,6 +68,27 @@ $( document ).ready(function() {
     	color.domain(d3.extent(data, function(d) {
     		return +d.vuln;
     	}));
+
+        let colorKey = cartogramma.append("g")
+        .classed("legend", true)
+        .attr("transform", "translate(" + margin + "," + (height - 4 * margin) + ")");
+
+        colorKey.selectAll("legend")
+        .data(d3.range(100), function(d) { return d; })
+        .enter().append("rect")
+        .classed(".scale", true)
+        .attr("x", function(d, i) { return i; })
+        .attr("y", 0)
+        .attr("height", 10)
+        .attr("width", 100)
+        .style("fill", function(d, i ) { return colorScale(d); });
+
+        colorKey.append("text")
+        .text("Indice di vulnerabilità")
+        .classed("label", true)
+        .attr("x", 0)
+        .attr("y", 25);
+
 
     	projection.scale(190)
     	.translate([width / 2, height / 2]);
@@ -120,6 +151,7 @@ $( document ).ready(function() {
     		d3.select(this).style("opacity", 1);
 
     		let glyph = d3.select("#tooltip").append("svg")
+    		.classed("glyph", true)
     		.attr("width", 62)
     		.attr("height", 62)
 
@@ -194,9 +226,7 @@ $( document ).ready(function() {
     			return d.id;
     		}
     	})
-    	.style("text-anchor", "middle")
-    	.style("fill", "var(--dark)")
-    	.style("font-size", "0.6rem");
+    	.style("text-anchor", "middle");
 
     // tick function
     function tick(e) {

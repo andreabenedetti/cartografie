@@ -53,11 +53,11 @@ h1 {
 }
 
 a, a:visited {
-	color: var(--orange);
+	color: var(--pink);
 }
 
 a:hover {
-	color: var(--orange);
+	color: var(--pink);
 }
 
 #cartogramma {
@@ -74,6 +74,9 @@ a:hover {
 
 .label {
 	pointer-events: none;
+	text-transform: uppercase;
+	font-size: 0.7rem;
+	fill: var(--dark);
 }
 
 #tooltip {
@@ -90,7 +93,7 @@ a:hover {
 	text-transform: uppercase;
 	font-size: 0.9rem;
 	font-weight: bold;
-	color: var(--orange);
+	color: var(--dark);
 }
 
 #tooltip .funds {
