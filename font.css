@@ -1,0 +1,141 @@
+/* FONT FACE DA INCLUDERE NEL PROPRIO CSS */
+@font-face {
+    font-family: "main-regular";
+    font-style: normal;
+    font-weight: normal;
+    src: url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brerarg-webfont.eot");
+    src: url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brerarg-webfont.eot?#iefix") format("embedded-opentype"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brerarg-webfont.woff") format("woff"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brerarg-webfont.ttf") format("truetype"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brerarg-webfont.svg#BreraRegularttf") format("svg");
+}
+@font-face {
+    font-family: "main-heavy";
+    font-style: normal;
+    font-weight: normal;
+    src: url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brerahv-webfont.eot");
+    src: url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brerahv-webfont.eot?#iefix") format("embedded-opentype"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brerahv-webfont.woff") format("woff"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brerahv-webfont.ttf") format("truetype"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brerahv-webfont.svg#BreraHeavyttf") format("svg");
+}
+@font-face {
+    font-family: "main-bold";
+    font-style: normal;
+    font-weight: normal;
+    src: url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brerabd-webfont.eot");
+    src: url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brerabd-webfont.eot?#iefix") format("embedded-opentype"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brerabd-webfont.woff") format("woff"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brerabd-webfont.ttf") format("truetype"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brerabd-webfont.svg#BreraRegularttf") format("svg");
+}
+@font-face {
+    font-family: "main-condensed_regular";
+    font-style: normal;
+    font-weight: normal;
+    src: url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnrg-webfont.eot");
+    src: url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnrg-webfont.eot?#iefix") format("embedded-opentype"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnrg-webfont.woff") format("woff"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnrg-webfont.ttf") format("truetype"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnrg-webfont.svg#BreraCondensedRegularttf") format("svg");
+}
+@font-face {
+    font-family: "main-condensed_bold";
+    font-style: normal;
+    font-weight: normal;
+    src: url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnbd-webfont.eot");
+    src: url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnbd-webfont.eot?#iefix") format("embedded-opentype"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnbd-webfont.woff") format("woff"),
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnbd-webfont.ttf") format("truetype"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnbd-webfont.svg#BreraCondensedBoldttf") format("svg");
+}
+@font-face {
+    font-family: "main-condensed_bold_italic";
+    font-style: normal;
+    font-weight: normal;
+    src: url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnbdit-webfont.eot");
+    src: url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnbdit-webfont.eot?#iefix") format("embedded-opentype"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnbdit-webfont.woff") format("woff"),
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnbdit-webfont.ttf") format("truetype"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnbdit-webfont.svg#BreraCondensedBoldItalicttf") format("svg");
+}
+@font-face {
+    font-family: "main-condensed_heavy";
+    font-style: normal;
+    font-weight: normal;
+    src: url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnhv-webfont.eot");
+    src: url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnhv-webfont.eot?#iefix") format("embedded-opentype"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnhv-webfont.woff") format("woff"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnhv-webfont.ttf") format("truetype"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnhv-webfont.svg#BreraCondensedHeavyttf") format("svg");
+}
+@font-face {
+    font-family: "main-condensed_semibold_italic";
+    font-style: normal;
+    font-weight: normal;
+    src: url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnsbit-webfont.eot");
+    src: url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnsbit-webfont.eot?#iefix") format("embedded-opentype"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnsbit-webfont.woff") format("woff"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnsbit-webfont.ttf") format("truetype"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnsbit-webfont.svg#brera_condensedSBdIt") format("svg");
+}
+@font-face {
+    font-family: "main-semibold";
+    font-style: normal;
+    font-weight: normal;
+    src: url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brerasb-webfont.eot");
+    src: url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brerasb-webfont.eot?#iefix") format("embedded-opentype"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brerasb-webfont.woff") format("woff"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brerasb-webfont.ttf") format("truetype"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brerasb-webfont.svg#BreraSemiBoldttf") format("svg");
+}
+@font-face {
+    font-family: "main-condensed_light";
+    font-style: normal;
+    font-weight: normal;
+    src: url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnlt-webfont.eot");
+    src: url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnlt-webfont.eot?#iefix") format("embedded-opentype"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnlt-webfont.woff") format("woff"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnlt-webfont.ttf") format("truetype"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnlt-webfont.svg#BreraCondensedLightttf") format("svg");
+}
+@font-face {
+    font-family: "main-condensed_light_italic";
+    font-style: normal;
+    font-weight: normal;
+    src: url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnltit-webfont.eot");
+    src: url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnltit-webfont.eot?#iefix") format("embedded-opentype"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnltit-webfont.woff") format("woff"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnltit-webfont.ttf") format("truetype"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnltit-webfont.svg#BreraCondensedLightItalicttf") format("svg");
+}
+@font-face {
+    font-family: "main-light";
+    font-style: normal; 
+    font-weight: normal;
+    src: url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/breralt-webfont.eot");
+    src: url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/breralt-webfont.eot?#iefix") format("embedded-opentype"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/breralt-webfont.woff") format("woff"),
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/breralt-webfont.ttf") format("truetype"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/breralt-webfont.svg#BreraLightttf") format("svg");
+}
+@font-face {
+    font-family: "main-light_italic";
+    font-style: normal;
+    font-weight: normal;
+    src: url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnltit-webfont.eot");
+    src: url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnltit-webfont.eot?#iefix") format("embedded-opentype"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnltit-webfont.woff") format("woff"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnltit-webfont.ttf") format("truetype"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/brera/brecnltit-webfont.svg#BreraLightItalicttf") format("svg");
+}
+@font-face {
+    font-family: "title-bold";
+    font-style: normal;
+    font-weight: normal;
+    src: url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/solferino/solferinotext-bold-webfont.eot");
+    src: url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/solferino/solferinotext-bold-webfont.eot?#iefix") format("embedded-opentype"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/solferino/solferinotext-bold-webfont.woff?v=s201804061620") format("woff"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/solferino/solferinotext-bold-webfont.ttf") format("truetype"), 
+         url("//css2.corriereobjects.it/includes2013/LIBS/css/fonts/solferino/solferinotext-bold-webfont.svgttf") format("svg");
+}

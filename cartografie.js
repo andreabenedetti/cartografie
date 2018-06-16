@@ -10,7 +10,8 @@ $( document ).ready(function() {
 	.attr("height", height)
 	.style("background", "rgba(0,0,0,.02");
 
-	let projection = d3.geoMercator();
+	let projection = d3.geoConicEqualArea()
+	.fitSize([width, height], cartogramma);
 
 	let size = d3.scaleSqrt()
 	.range([4,60]);
