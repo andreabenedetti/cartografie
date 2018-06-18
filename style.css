@@ -38,9 +38,9 @@
 }
 
 body {
-	background: var(--light);
-	font-family: var(--font-family-sans-serif);
+	background: snow;
 	color: black;
+	font-weight: 400;
 	padding-top: 2rem;
 }
 
@@ -53,11 +53,11 @@ h1 {
 }
 
 a, a:visited {
-	color: var(--pink);
+	color: #FF6F59;
 }
 
 a:hover {
-	color: var(--pink);
+	color: #FF6F59;
 }
 
 #cartogramma {

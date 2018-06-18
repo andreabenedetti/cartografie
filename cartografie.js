@@ -8,13 +8,13 @@ $( document ).ready(function() {
 	.append("svg")
 	.attr("width", width)
 	.attr("height", height)
-	.style("background", "rgba(0,0,0,.02");
+	.style("background", "rgba(0,0,0,.05");
 
 	let projection = d3.geoEquirectangular()
 	.fitSize([width, height], cartogramma);
 
 	let size = d3.scaleSqrt()
-	.range([4,60]);
+	.range([3,60]);
 
 	let interpolators = [
     // These are from d3-scale.
@@ -50,13 +50,14 @@ $( document ).ready(function() {
     // let color = d3.scaleSequential(d3.interpolateRdPu);
     let color = d3.scaleLinear()
     .interpolate(d3.interpolateRgb)
-    .range([d3.rgb("#59c9a5"), d3.rgb('#FF495D')])
+    // .range([d3.rgb("#59c9a5"), d3.rgb('#FF495D')])
+    .range([d3.rgb("#254441"), d3.rgb('#FF6F59')])
     .domain([0,100]);
 
     // let colorScale = d3.scaleSequential(d3.interpolateRdPu)
     let colorScale = d3.scaleLinear()
     .interpolate(d3.interpolateRgb)
-    .range([d3.rgb("#59c9a5"), d3.rgb('#FF495D')])
+    .range([d3.rgb("#254441"), d3.rgb('#FF6F59')])
     .domain([0,100]);
 
     d3.tsv("countries.tsv", function(error, data) {
