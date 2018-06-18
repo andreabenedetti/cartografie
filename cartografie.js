@@ -7,7 +7,7 @@ let cartogramma = d3.select("#cartogramma")
 .append("svg")
 .attr("width", width)
 .attr("height", height)
-.style("background", "rgba(0,0,0,.05");
+.style("background", "#e5e1e1");
 
 let projection = d3.geoEquirectangular()
 .fitSize([width, height], cartogramma);
