@@ -1,22 +1,21 @@
-$( document ).ready(function() {
 
-	let margin = 10,
-	width = window.innerWidth,
-	height = window.innerHeight - margin;
+let margin = 10,
+width = window.innerWidth,
+height = window.innerHeight - margin;
 
-	let cartogramma = d3.select("#cartogramma")
-	.append("svg")
-	.attr("width", width)
-	.attr("height", height)
-	.style("background", "rgba(0,0,0,.05");
+let cartogramma = d3.select("#cartogramma")
+.append("svg")
+.attr("width", width)
+.attr("height", height)
+.style("background", "rgba(0,0,0,.05");
 
-	let projection = d3.geoEquirectangular()
-	.fitSize([width, height], cartogramma);
+let projection = d3.geoEquirectangular()
+.fitSize([width, height], cartogramma);
 
-	let size = d3.scaleSqrt()
-	.range([3,60]);
+let size = d3.scaleSqrt()
+.range([3,60]);
 
-	let interpolators = [
+let interpolators = [
     // These are from d3-scale.
     "Viridis",
     "Inferno",
@@ -92,10 +91,10 @@ $( document ).ready(function() {
         .attr("y", 25);
 
 
-    	projection.scale(190)
-    	.translate([width / 2, height / 2]);
+        projection.scale(190)
+        .translate([width / 2, height / 2]);
 
-    	console.log("inizio");
+        console.log("inizio");
     	// console.log(JSON.stringify(data, null, "\t"));
 
     	let nodes = data
@@ -137,98 +136,96 @@ $( document ).ready(function() {
 
     	let countryRect = node.enter()
     	.append("rect")
-    	.classed("rect", true)
-    	.attr("width", d=>{ 
-    		return size(+d.funds);
-    	})
-    	.attr("height", d=>{ 
-    		return size(+d.funds);
-    	})
-    	.attr("fill", d=> { return color(+d.vuln); })
-    	.on("click", function(d) {
-    		d3.selectAll("#tooltip p").remove();
-    		d3.selectAll("#tooltip svg").remove();
+        // .filter(d => { return filtered })
+        .classed("rect", true)
+        .attr("width", d=>{ 
+          return size(+d.funds);
+      })
+        .attr("height", d=>{ 
+          return size(+d.funds);
+      })
+        .attr("fill", d=> { return color(+d.vuln); })
+        .on("click", function(d) {
+          d3.selectAll("#tooltip p").remove();
+          d3.selectAll("#tooltip svg").remove();
 
-    		d3.selectAll(".rect").style("opacity", 0.2);
-    		d3.select(this).style("opacity", 1);
+          d3.selectAll(".rect").style("opacity", 0.2);
+          d3.select(this).style("opacity", 1);
 
-    		let glifo = d3.select("#tooltip").append("svg")
-    		.classed("glyph", true)
-    		.attr("width", 62)
-    		.attr("height", 62)
+          let glifo = d3.select("#tooltip").append("svg")
+          .classed("glyph", true)
+          .attr("width", 62)
+          .attr("height", 62)
 
-    		if (extent.length > 2) {
-    			extent.shift();
-    		}
+          if (extent.length > 2) {
+             extent.shift();
+         }
 
-    		extent.unshift({ funds: d.funds, vuln: d.vuln });
+         extent.unshift({ funds: d.funds, vuln: d.vuln });
 
-    		console.log(extent);
+         console.log(extent);
 
-    		glifo.selectAll(".rect")
-    		.data(extent)
-    		.enter()
-    		.append("rect")
-    		.classed("rect", true)
-    		.attr("width", function(f) { 
-    			return size(f.funds);
-    		})
-    		.attr("height", function(f) { 
-    			return size(f.funds);
-    		})
-    		.attr("fill", f => { 
+         glifo.selectAll(".rect")
+         .data(extent)
+         .enter()
+         .append("rect")
+         .classed("rect", true)
+         .attr("width", function(f) { 
+             return size(f.funds);
+         })
+         .attr("height", function(f) { 
+             return size(f.funds);
+         })
+         .attr("fill", f => { 
 
-    			if (f.vuln == null) {
-    				return "none";
-    			}else {
-    				return color(+f.vuln);
-    			}
+             if (f.vuln == null) {
+                return "none";
+            }else {
+                return color(+f.vuln);
+            }
 
-    		})
-    		.attr("stroke", f => {
+        })
+         .attr("stroke", f => {
 
-    			if (f.vuln == null) {
-    				return "black";
-    			}else {
-    				return "none";
-    			}
+             if (f.vuln == null) {
+                return "black";
+            }else {
+                return "none";
+            }
 
-    		})
-    		.attr("x", 1)
-    		.attr("y", 1);
+        })
+         .attr("x", 1)
+         .attr("y", 1);
 
-    		d3.select("#tooltip").append("p")
-    		.classed("escape", true)
-    		.text("✕")
-    		.on("click", function(d) {
-    			d3.selectAll(".rect").style("opacity", 1);
-    			d3.selectAll("#tooltip p").remove();
-    			d3.selectAll("#tooltip svg").remove();
-    		});;
+         d3.select("#tooltip").append("p")
+         .classed("escape", true)
+         .text("✕")
+         .on("click", function(d) {
+             d3.selectAll(".rect").style("opacity", 1);
+             d3.selectAll("#tooltip p").remove();
+             d3.selectAll("#tooltip svg").remove();
+         });;
 
-    		d3.select("#tooltip").append("p")
-    		.classed("country", true)
-    		.text(d.name);
+         d3.select("#tooltip").append("p")
+         .classed("country", true)
+         .text(d.name);
 
-    		d3.select("#tooltip").append("p")
-    		.classed("funds", true)
-    		.text(Math.ceil(d.funds) + " mil. di dollari");
+         d3.select("#tooltip").append("p")
+         .classed("funds", true)
+         .text(Math.ceil(d.funds) + " mil. di dollari");
 
-    	});
+     });
 
-    	let label = cartogramma.selectAll(".label")
-    	.data(nodes)
-    	.enter()
-    	.append("text")
-    	.classed("label", true)
-    	.text(d=> { 
-    		if(d.funds == 0) {
-    			return " ";
-    		} else {
-    			return d.id;
-    		}
-    	})
-    	.style("text-anchor", "middle");
+        let label = cartogramma.selectAll(".label")
+        .data(nodes)
+        .enter()
+        .filter(d => { return d.funds != 0 })
+        .append("text")
+        .classed("label", true)
+        .text(d=> { 
+            return d.id;
+        })
+        .style("text-anchor", "middle");
 
     // tick function
     function tick(e) {
@@ -238,6 +235,12 @@ $( document ).ready(function() {
     	label.attr("x", function(d) { return d.x - ( d.r * 0.5 ); })
     	.attr("y", function(d) { return d.y + 12; });
     }
+
+    function filter(d) {
+        console.log(data[d.id])
+    }
+
+    d3.select("#filterButton").on("click", filter);
 
 	// anti-collision for rectangles by mike bostock
 	function collide() {
@@ -263,7 +266,5 @@ $( document ).ready(function() {
 			}
 		}
 	}
-
-});
 
 });
