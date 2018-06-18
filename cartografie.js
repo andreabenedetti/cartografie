@@ -50,13 +50,13 @@ let interpolators = [
     let color = d3.scaleLinear()
     .interpolate(d3.interpolateRgb)
     // .range([d3.rgb("#59c9a5"), d3.rgb('#FF495D')])
-    .range([d3.rgb("#254441"), d3.rgb('#FF6F59')])
+    .range([d3.rgb("#59C9A5"), d3.rgb('#FF6F59')])
     .domain([0,100]);
 
     // let colorScale = d3.scaleSequential(d3.interpolateRdPu)
     let colorScale = d3.scaleLinear()
     .interpolate(d3.interpolateRgb)
-    .range([d3.rgb("#254441"), d3.rgb('#FF6F59')])
+    .range([d3.rgb("#59C9A5"), d3.rgb('#FF6F59')])
     .domain([0,100]);
 
     d3.tsv("countries.tsv", function(error, data) {
@@ -72,7 +72,7 @@ let interpolators = [
 
         let colorKey = cartogramma.append("g")
         .classed("legend", true)
-        .attr("transform", "translate(" + margin + "," + (height - 4 * margin) + ")");
+        .attr("transform", "translate(" + ( margin * 4 ) + "," + ( height - 4 * margin ) + ")");
 
         colorKey.selectAll("legend")
         .data(d3.range(100), function(d) { return d; })
@@ -234,13 +234,19 @@ let interpolators = [
 
     	label.attr("x", function(d) { return d.x - ( d.r * 0.5 ); })
     	.attr("y", function(d) { return d.y + 12; });
+
+      d3.select("#filterButton").on("click", filter);
     }
 
     function filter(d) {
-        console.log(data[d.id])
+        countryRect
+        .transition()
+        .duration(300)
+        .filter(d => { return d.id !== "NE" })
+        .attr("height", 0)
+        .attr("width", 0)
+        .remove();
     }
-
-    d3.select("#filterButton").on("click", filter);
 
 	// anti-collision for rectangles by mike bostock
 	function collide() {
