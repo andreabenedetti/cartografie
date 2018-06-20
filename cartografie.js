@@ -242,9 +242,15 @@ let interpolators = [
         countryRect
         .transition()
         .duration(300)
-        .filter(d => { return d.id !== "NE" })
-        .attr("height", 0)
-        .attr("width", 0)
+        .filter(d => { return d.vuln == 0 })
+        .attr("opacity", 0)
+        .remove();
+
+        label
+        .transition()
+        .duration(300)
+        .filter(d => { return d.vuln == 0 })
+        .attr("opacity", 0)
         .remove();
     }
 
