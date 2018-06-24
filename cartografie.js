@@ -9,8 +9,7 @@ let cartogramma = d3.select("#cartogramma")
 .attr("height", height)
 .style("background", "#e5e1e1");
 
-let projection = d3.geoEquirectangular()
-.fitSize([width, height], cartogramma);
+let projection = d3.geoAlbersUsa();
 
 let size = d3.scaleSqrt()
 .range([3,60]);
@@ -59,7 +58,7 @@ let interpolators = [
     .range([d3.rgb("#59C9A5"), d3.rgb('#FF6F59')])
     .domain([0,100]);
 
-    d3.tsv("countries.tsv", function(error, data) {
+    d3.tsv("violenza.tsv", function(error, data) {
     	if (error) throw error;
 
     	size.domain(d3.extent(data, function(d) {
@@ -91,38 +90,26 @@ let interpolators = [
         .attr("y", 25);
 
 
-        projection.scale(190)
+        projection.scale([width * 1.5])
         .translate([width / 2, height / 2]);
 
         console.log("inizio");
     	// console.log(JSON.stringify(data, null, "\t"));
 
     	let nodes = data
-    	.map(d=> {
+    	.map(d => {
     		let point = projection([d.lon, d.lat]);
-    		let value = +d.funds;
     		return {
     			x: point[0], y: point[1],
     			x0: point[0], y0: point[1],
     			id: d.id,
-    			name: d.country,
-    			funds: d.funds,
+    			state: d.state,
     			vuln: d.vuln,
-    			r: size(value),
-    			value: value
+    			r: 3
     		};
     	});
 
-    	let extent = d3.extent(data, function(d) {
-    		return +d.funds;
-    	});
-
-    	extent = extent.map(d=> {
-    		return {
-    			funds: d,
-    			vuln: null
-    		};
-    	});
+      console.log(nodes);
 
     	let simulation = d3.forceSimulation()
     	.force("x", d3.forceX(function(d) { return d.x0; }))
@@ -131,20 +118,15 @@ let interpolators = [
     	.nodes(nodes)
     	.on("tick", tick);
 
-    	let node = cartogramma.selectAll(".rect")
+    	let node = cartogramma.selectAll(".circle")
     	.data(nodes)
 
     	let countryRect = node.enter()
-    	.append("rect")
+    	.append("circle")
         // .filter(d => { return filtered })
-        .classed("rect", true)
-        .attr("width", d=>{ 
-          return size(+d.funds);
-      })
-        .attr("height", d=>{ 
-          return size(+d.funds);
-      })
-        .attr("fill", d=> { return color(+d.vuln); })
+        .classed("circle", true)
+        .attr("r", 3)
+        .attr("fill", "black")
         .on("click", function(d) {
           d3.selectAll("#tooltip p").remove();
           d3.selectAll("#tooltip svg").remove();
