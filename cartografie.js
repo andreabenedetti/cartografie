@@ -9,7 +9,7 @@ let cartogramma = d3.select("#cartogramma")
 .attr("height", height)
 .style("background", "#e5e1e1");
 
-let projection = d3.geoEquirectangular()
+let projection = d3.geoMercator()
 .fitSize([width, height], cartogramma);
 
 let size = d3.scaleSqrt()
@@ -59,15 +59,15 @@ let interpolators = [
     .range([d3.rgb("#59C9A5"), d3.rgb('#FF6F59')])
     .domain([0,100]);
 
-    d3.tsv("countries.tsv", function(error, data) {
+    d3.tsv("migrants.tsv", function(error, data) {
     	if (error) throw error;
 
     	size.domain(d3.extent(data, function(d) {
-    		return +d.funds;
+    		return +d.deadmissing;
     	}));
 
     	color.domain(d3.extent(data, function(d) {
-    		return +d.vuln;
+    		return +d.year;
     	}));
 
         let colorKey = cartogramma.append("g")
@@ -99,33 +99,34 @@ let interpolators = [
 
     	let nodes = data
     	.map(d=> {
-    		let point = projection([d.lon, d.lat]);
-    		let value = +d.funds;
+    		let point = projection([d.lat, d.lon]);
+    		let value = +d.deadmissing;
     		return {
     			x: point[0], y: point[1],
     			x0: point[0], y0: point[1],
-    			id: d.id,
-    			name: d.country,
-    			funds: d.funds,
-    			vuln: d.vuln,
+    			name: d.region,
+    			dmis: d.deadmissing,
+    			dead: d.dead,
     			r: size(value),
     			value: value
     		};
     	});
 
+
+
     	let extent = d3.extent(data, function(d) {
-    		return +d.funds;
+    		return +d.deadmissing;
     	});
 
     	extent = extent.map(d=> {
     		return {
-    			funds: d,
-    			vuln: null
+    			dmis: d,
+    			dead: null
     		};
     	});
 
     	let simulation = d3.forceSimulation()
-    	.force("x", d3.forceX(function(d) { return d.x0; }))
+    	.force("x", d3.forceX(function(d) { return d.x0;}))
     	.force("y", d3.forceY(function(d) { return d.y0; }))
     	.force("collide", collide)
     	.nodes(nodes)
@@ -138,92 +139,17 @@ let interpolators = [
     	.append("rect")
         // .filter(d => { return filtered })
         .classed("rect", true)
-        .attr("width", d=>{ 
-          return size(+d.funds);
-      })
-        .attr("height", d=>{ 
-          return size(+d.funds);
-      })
-        .attr("fill", d=> { return color(+d.vuln); })
-        .on("click", function(d) {
-          d3.selectAll("#tooltip p").remove();
-          d3.selectAll("#tooltip svg").remove();
-
-          d3.selectAll(".rect").style("opacity", 0.2);
-          d3.select(this).style("opacity", 1);
-
-          let glifo = d3.select("#tooltip").append("svg")
-          .classed("glyph", true)
-          .attr("width", 62)
-          .attr("height", 62)
-
-          if (extent.length > 2) {
-             extent.shift();
-         }
-
-         extent.unshift({ funds: d.funds, vuln: d.vuln });
-
-         console.log(extent);
-
-         glifo.selectAll(".rect")
-         .data(extent)
-         .enter()
-         .append("rect")
-         .classed("rect", true)
-         .attr("width", function(f) { 
-             return size(f.funds);
-         })
-         .attr("height", function(f) { 
-             return size(f.funds);
-         })
-         .attr("fill", f => { 
-
-             if (f.vuln == null) {
-                return "none";
-            }else {
-                return color(+f.vuln);
-            }
-
-        })
-         .attr("stroke", f => {
-
-             if (f.vuln == null) {
-                return "black";
-            }else {
-                return "none";
-            }
-
-        })
-         .attr("x", 1)
-         .attr("y", 1);
-
-         d3.select("#tooltip").append("p")
-         .classed("escape", true)
-         .text("✕")
-         .on("click", function(d) {
-             d3.selectAll(".rect").style("opacity", 1);
-             d3.selectAll("#tooltip p").remove();
-             d3.selectAll("#tooltip svg").remove();
-         });;
-
-         d3.select("#tooltip").append("p")
-         .classed("country", true)
-         .text(d.name);
-
-         d3.select("#tooltip").append("p")
-         .classed("funds", true)
-         .text(Math.ceil(d.funds) + " mil. di dollari");
-
-     });
+        .attr("width", 3)
+        .attr("height", 3)
+        .attr("fill", d=> { return color(+d.vuln); });
 
         let label = cartogramma.selectAll(".label")
         .data(nodes)
         .enter()
-        .filter(d => { return d.funds != 0 })
         .append("text")
         .classed("label", true)
         .text(d=> { 
-            return d.id;
+            return d.year;
         })
         .style("text-anchor", "middle");
 
@@ -234,18 +160,6 @@ let interpolators = [
 
     	label.attr("x", function(d) { return d.x - ( d.r * 0.5 ); })
     	.attr("y", function(d) { return d.y + 12; });
-
-      d3.select("#filterButton").on("click", filter);
-    }
-
-    function filter(d) {
-        countryRect
-        .transition()
-        .duration(300)
-        .filter(d => { return d.id !== "NE" })
-        .attr("height", 0)
-        .attr("width", 0)
-        .remove();
     }
 
 	// anti-collision for rectangles by mike bostock
