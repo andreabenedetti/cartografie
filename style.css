@@ -38,7 +38,7 @@
 }
 
 body {
-	background: snow;
+	background: #f9f9f9;
 	color: black;
 	font-weight: 400;
 	padding-top: 2rem;
@@ -58,10 +58,6 @@ a, a:visited {
 
 a:hover {
 	color: #FF6F59;
-}
-
-#cartogramma {
-	margin-top: 5rem;
 }
 
 .rect {
@@ -117,6 +113,13 @@ a:hover {
 
 .escape:hover {
 	cursor: pointer;
+}
+
+.hull {
+  fill: lightgreen;
+  stroke: steelblue;
+  stroke-width: 2px;
+  stroke-linejoin: round;
 }
 
 footer {

@@ -1,57 +1,25 @@
 
 let margin = 10,
-width = window.innerWidth,
-height = window.innerHeight - margin;
+width = 3000,
+height = 2800;
 
 let cartogramma = d3.select("#cartogramma")
 .append("svg")
 .attr("width", width)
-.attr("height", height)
-.style("background", "#e5e1e1");
+.attr("height", height);
 
-let projection = d3.geoMercator()
-.fitSize([width, height], cartogramma);
+let projection = d3.geoConicEquidistant()
+.fitSize([width, height], cartogramma)
+.scale(700)
+.translate([width / 2, height / 2]);
 
 let size = d3.scaleSqrt()
-.range([3,60]);
-
-let interpolators = [
-    // These are from d3-scale.
-    "Viridis",
-    "Inferno",
-    "Magma",
-    "Plasma",
-    "Warm",
-    "Cool",
-    "Rainbow",
-    "CubehelixDefault",
-    // These are from d3-scale-chromatic
-    "Blues",
-    "Greens",
-    "Greys",
-    "Oranges",
-    "Purples",
-    "Reds",
-    "BuGn",
-    "BuPu",
-    "GnBu",
-    "OrRd",
-    "PuBuGn",
-    "PuBu",
-    "PuRd",
-    "RdPu",
-    "YlGnBu",
-    "YlGn",
-    "YlOrBr",
-    "YlOrRd"
-    ];
+.range([2,30]);
 
     // let color = d3.scaleSequential(d3.interpolateRdPu);
-    let color = d3.scaleLinear()
-    .interpolate(d3.interpolateRgb)
-    // .range([d3.rgb("#59c9a5"), d3.rgb('#FF495D')])
-    .range([d3.rgb("#59C9A5"), d3.rgb('#FF6F59')])
-    .domain([0,100]);
+    let color = d3.scaleOrdinal()
+    .domain(["Central Mediterranean","Western Mediterranean","Eastern Mediterranean","Italy to France","Western African","Western Balkans"])
+    .range(["#885053","#FE5F55","#777DA7","#94C9A9","#C6ECAE","#453F3C"]);
 
     // let colorScale = d3.scaleSequential(d3.interpolateRdPu)
     let colorScale = d3.scaleLinear()
@@ -62,13 +30,29 @@ let interpolators = [
     d3.tsv("migrants.tsv", function(error, data) {
     	if (error) throw error;
 
-    	size.domain(d3.extent(data, function(d) {
-    		return +d.deadmissing;
-    	}));
+        let path = d3.geoPath().projection(projection);
 
-    	color.domain(d3.extent(data, function(d) {
-    		return +d.year;
-    	}));
+        let url = "https://gist.githubusercontent.com/mbostock/4090846/raw/d534aba169207548a8a3d670c9c2cc719ff05c47/world-50m.json";
+
+        d3.json(url, function(error, world) {
+          if (error) throw error;
+
+          cartogramma.selectAll("path")
+          .data(topojson.feature(world, world.objects.countries).features)
+          .enter().append("path")
+          .attr("d", path)
+          .attr("fill", "none")
+          .attr("stroke", "#d5d5d5");
+
+      });
+
+        size.domain(d3.extent(data, function(d) {
+          return +d.deadmissing;
+      }));
+
+        color.domain(d3.extent(data, function(d) {
+          return +d.year;
+      }));
 
         let colorKey = cartogramma.append("g")
         .classed("legend", true)
@@ -90,32 +74,31 @@ let interpolators = [
         .attr("x", 0)
         .attr("y", 25);
 
-
-        projection.scale(190)
-        .translate([width / 2, height / 2]);
-
         console.log("inizio");
     	// console.log(JSON.stringify(data, null, "\t"));
 
     	let nodes = data
     	.map(d=> {
-    		let point = projection([d.lat, d.lon]);
+    		let point = projection([d.lon, d.lat]);
     		let value = +d.deadmissing;
     		return {
     			x: point[0], y: point[1],
     			x0: point[0], y0: point[1],
     			name: d.region,
-    			dmis: d.deadmissing,
-    			dead: d.dead,
-    			r: size(value),
-    			value: value
-    		};
-    	});
+                missing: d.missing,
+                dead: d.dead,
+                survivors: d.survivors,
+                year: d.year,
+                r: size(value),
+                value: value,
+                route: d.route
+            };
+        });
 
 
 
     	let extent = d3.extent(data, function(d) {
-    		return +d.deadmissing;
+    		return +d.dmis;
     	});
 
     	extent = extent.map(d=> {
@@ -128,38 +111,49 @@ let interpolators = [
     	let simulation = d3.forceSimulation()
     	.force("x", d3.forceX(function(d) { return d.x0;}))
     	.force("y", d3.forceY(function(d) { return d.y0; }))
-    	.force("collide", collide)
+    	// .force("collide", collide)
     	.nodes(nodes)
     	.on("tick", tick);
 
     	let node = cartogramma.selectAll(".rect")
     	.data(nodes)
 
-    	let countryRect = node.enter()
+    	let missingRect = node.enter()
     	.append("rect")
-        // .filter(d => { return filtered })
+        .filter(d => { return d.year == 2018 })
         .classed("rect", true)
-        .attr("width", 3)
-        .attr("height", 3)
-        .attr("fill", d=> { return color(+d.vuln); });
+        .attr("width", 2)
+        .attr("height", d=> { return size(d.missing)})
+        .attr("fill", "orange");
 
-        let label = cartogramma.selectAll(".label")
-        .data(nodes)
-        .enter()
-        .append("text")
-        .classed("label", true)
-        .text(d=> { 
-            return d.year;
-        })
-        .style("text-anchor", "middle");
+        let survivorsRect = node.enter()
+        .append("rect")
+        .filter(d => { return d.year == 2018 })
+        .classed("rect", true)
+        .attr("width", 2)
+        .attr("height", d=> { return size(d.survivors)})
+        .attr("fill", "purple");
+
+        // let label = cartogramma.selectAll(".label")
+        // .data(nodes)
+        // .enter()
+        // .append("text")
+        // .classed("label", true)
+        // .text(d=> { 
+        //     return d.year;
+        // })
+        // .style("text-anchor", "middle");
 
     // tick function
     function tick(e) {
-    	countryRect.attr("x", function(d) { return d.x - d.r; })
-    	.attr("y", function(d) { return d.y - d.r; });
+    	survivorsRect.attr("x", function(d) { return d.x; })
+    	.attr("y", function(d) { return d.y; });
 
-    	label.attr("x", function(d) { return d.x - ( d.r * 0.5 ); })
-    	.attr("y", function(d) { return d.y + 12; });
+        missingRect.attr("x", function(d) { return d.x; })
+        .attr("y", function(d) { return d.y + size(+d.survivors); });
+
+    	// label.attr("x", function(d) { return d.x - ( d.r * 0.5 ); })
+    	// .attr("y", function(d) { return d.y + 12; });
     }
 
 	// anti-collision for rectangles by mike bostock
