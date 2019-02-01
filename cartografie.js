@@ -1,6 +1,6 @@
 
 let margin = 10,
-width = 3000,
+width = window.innerWidth,
 height = 2800;
 
 let cartogramma = d3.select("#cartogramma")
@@ -8,83 +8,106 @@ let cartogramma = d3.select("#cartogramma")
 .attr("width", width)
 .attr("height", height);
 
+
+let mappa = cartogramma.append("g");
+let contourArea = cartogramma.append("g");
+let contourLine = cartogramma.append("g");
+let confini = cartogramma.append("g");
+let route = cartogramma.append("g");
+let cities = cartogramma.append("g");
+
 let projection = d3.geoConicEquidistant()
 .fitSize([width, height], cartogramma)
-.scale(700)
-.translate([width / 2, height / 2]);
+.scale(1600)
+.translate([width / 2 - 320, height / 2]);
 
-let size = d3.scaleSqrt()
-.range([2,30]);
-
-    // let color = d3.scaleSequential(d3.interpolateRdPu);
-    let color = d3.scaleOrdinal()
-    .domain(["Central Mediterranean","Western Mediterranean","Eastern Mediterranean","Italy to France","Western African","Western Balkans"])
-    .range(["#885053","#FE5F55","#777DA7","#94C9A9","#C6ECAE","#453F3C"]);
+let size = d3.scaleLinear()
+.range([10,100]);
 
     // let colorScale = d3.scaleSequential(d3.interpolateRdPu)
-    let colorScale = d3.scaleLinear()
-    .interpolate(d3.interpolateRgb)
-    .range([d3.rgb("#59C9A5"), d3.rgb('#FF6F59')])
-    .domain([0,100]);
+    let color = d3.scalePow()
+    .exponent(.4)
+    .domain([0,1])
+    .interpolate(d3.interpolateHsl)
+    .range([d3.hsl("#eebb88"), d3.hsl("#FFFFFF")]);
 
     d3.tsv("migrants.tsv", function(error, data) {
     	if (error) throw error;
-
-        let path = d3.geoPath().projection(projection);
-
-        let url = "https://gist.githubusercontent.com/mbostock/4090846/raw/d534aba169207548a8a3d670c9c2cc719ff05c47/world-50m.json";
-
-        d3.json(url, function(error, world) {
-          if (error) throw error;
-
-          cartogramma.selectAll("path")
-          .data(topojson.feature(world, world.objects.countries).features)
-          .enter().append("path")
-          .attr("d", path)
-          .attr("fill", "none")
-          .attr("stroke", "#d5d5d5");
-
-      });
 
         size.domain(d3.extent(data, function(d) {
           return +d.deadmissing;
       }));
 
-        color.domain(d3.extent(data, function(d) {
-          return +d.year;
-      }));
+        let defs = cartogramma.append("defs");
 
-        let colorKey = cartogramma.append("g")
-        .classed("legend", true)
-        .attr("transform", "translate(" + ( margin * 4 ) + "," + ( height - 4 * margin ) + ")");
+        let filter = defs.append("filter")
+        .attr("id", "dropshadow")
 
-        colorKey.selectAll("legend")
-        .data(d3.range(100), function(d) { return d; })
-        .enter().append("rect")
-        .classed(".scale", true)
-        .attr("x", function(d, i) { return i; })
-        .attr("y", 0)
-        .attr("height", 10)
-        .attr("width", 100)
-        .style("fill", function(d, i ) { return colorScale(d); });
+        filter.append("feGaussianBlur")
+        .attr("in", "SourceAlpha")
+        .attr("stdDeviation", 2)
+        .attr("result", "blur");
+        filter.append("feOffset")
+        .attr("in", "blur")
+        .attr("dx", 5)
+        .attr("dy", 5)
+        .attr("result", "offsetBlur")
+        filter.append("feFlood")
+        .attr("in", "offsetBlur")
+        .attr("flood-color", "#3d3d3d")
+        .attr("flood-opacity", "0.1")
+        .attr("result", "offsetColor");
+        filter.append("feComposite")
+        .attr("in", "offsetColor")
+        .attr("in2", "offsetBlur")
+        .attr("operator", "in")
+        .attr("result", "offsetBlur");
 
-        colorKey.append("text")
-        .text("Indice di vulnerabilità")
-        .classed("label", true)
-        .attr("x", 0)
-        .attr("y", 25);
+        var feMerge = filter.append("feMerge");
 
-        console.log("inizio");
-    	// console.log(JSON.stringify(data, null, "\t"));
+        feMerge.append("feMergeNode")
+        .attr("in", "offsetBlur")
+        feMerge.append("feMergeNode")
+        .attr("in", "SourceGraphic");
 
-    	let nodes = data
-    	.map(d=> {
-    		let point = projection([d.lon, d.lat]);
-    		let value = +d.deadmissing;
-    		return {
-    			x: point[0], y: point[1],
-    			x0: point[0], y0: point[1],
-    			name: d.region,
+
+        let dataFiltered = data.filter(d=> { return d.year == 2015 } );
+
+        console.log(dataFiltered)
+
+        let densityData = d3.contourDensity()
+        .x(function(d) { return projection([d.lon, d.lat])[0]; })
+        .y(function(d) { return projection([d.lon, d.lat])[1]; })
+        .size([width, height])
+        .weight(d=> { return size(d.deadmissing) } ) 
+        .thresholds(27)
+        .bandwidth(8)
+        (dataFiltered)
+
+        contourArea.selectAll("path")
+        .data(densityData)
+        .enter().append("path")
+        .attr("d", d3.geoPath())
+        .attr("fill", d=> { return color(d.value); })
+        .attr("filter", "url(#dropshadow)");
+
+        contourLine.selectAll("path")
+        .data(densityData)
+        .enter().append("path")
+        .attr("d", d3.geoPath())
+        .attr("fill", "none")
+        .attr("stroke", "brown")
+        .attr("stroke-width", .5)
+        .attr("stroke-dasharray", "1 3");
+
+        let nodes = data
+        .map(d=> {
+            let point = projection([d.lon, d.lat]);
+            let value = +d.survivors;
+            return {
+                x: point[0], y: point[1],
+                x0: point[0], y0: point[1],
+                name: d.region,
                 missing: d.missing,
                 dead: d.dead,
                 survivors: d.survivors,
@@ -97,88 +120,107 @@ let size = d3.scaleSqrt()
 
 
 
-    	let extent = d3.extent(data, function(d) {
-    		return +d.dmis;
-    	});
+        let extent = d3.extent(data, function(d) {
+            return +d.dmis;
+        });
 
-    	extent = extent.map(d=> {
-    		return {
-    			dmis: d,
-    			dead: null
-    		};
-    	});
+        extent = extent.map(d=> {
+            return {
+                dmis: d,
+                dead: null
+            };
+        });
 
-    	let simulation = d3.forceSimulation()
-    	.force("x", d3.forceX(function(d) { return d.x0;}))
-    	.force("y", d3.forceY(function(d) { return d.y0; }))
-    	// .force("collide", collide)
-    	.nodes(nodes)
-    	.on("tick", tick);
+        let simulation = d3.forceSimulation()
+        .force("cx", d3.forceX(function(d) { return d.x0;}))
+        .force("cy", d3.forceY(function(d) { return d.y0; }))
+        // .force("collide", d3.forceCollide(2)
+     //    .iterations(10))
+     //    .alphaDecay(0)
+     //    .alpha(0.5)
+        .nodes(nodes)
+        .on("tick", tick);
 
-    	let node = cartogramma.selectAll(".rect")
-    	.data(nodes)
+        let node = cartogramma.selectAll(".circle")
+        .data(nodes) 
 
-    	let missingRect = node.enter()
-    	.append("rect")
-        .filter(d => { return d.year == 2018 })
-        .classed("rect", true)
-        .attr("width", 2)
-        .attr("height", d=> { return size(d.missing)})
-        .attr("fill", "orange");
+        let missingDot = node.enter()
+        .append("circle")
+        .filter(d=> { return d.year == 2015 })
+        .classed("circle", true)
+        .attr("r", 1.5)
+        .attr("fill", "black");
 
-        let survivorsRect = node.enter()
-        .append("rect")
-        .filter(d => { return d.year == 2018 })
-        .classed("rect", true)
-        .attr("width", 2)
-        .attr("height", d=> { return size(d.survivors)})
-        .attr("fill", "purple");
-
-        // let label = cartogramma.selectAll(".label")
-        // .data(nodes)
-        // .enter()
-        // .append("text")
-        // .classed("label", true)
-        // .text(d=> { 
-        //     return d.year;
-        // })
-        // .style("text-anchor", "middle");
-
-    // tick function
-    function tick(e) {
-    	survivorsRect.attr("x", function(d) { return d.x; })
-    	.attr("y", function(d) { return d.y; });
-
-        missingRect.attr("x", function(d) { return d.x; })
-        .attr("y", function(d) { return d.y + size(+d.survivors); });
-
-    	// label.attr("x", function(d) { return d.x - ( d.r * 0.5 ); })
-    	// .attr("y", function(d) { return d.y + 12; });
+        function tick(e) {
+        missingDot.attr("cx", function(d) { return d.x; })
+        .attr("cy", function(d) { return d.y + size(+d.survivors); });
     }
 
-	// anti-collision for rectangles by mike bostock
-	function collide() {
-		for (var k = 0, iterations = 4, strength = 0.5; k < iterations; ++k) {
-			for (var i = 0, n = nodes.length; i < n; ++i) {
-				for (var a = nodes[i], j = i + 1; j < n; ++j) {
-					var b = nodes[j],
-					x = a.x + a.vx - b.x - b.vx,
-					y = a.y + a.vy - b.y - b.vy,
-					lx = Math.abs(x),
-					ly = Math.abs(y),
-					r = a.r + b.r;
-					if (lx < r && ly < r) {
-						if (lx > ly) {
-							lx = (lx - r) * (x < 0 ? -strength : strength);
-							a.vx -= lx, b.vx += lx;
-						} else {
-							ly = (ly - r) * (y < 0 ? -strength : strength);
-							a.vy -= ly, b.vy += ly;
-						}
-					}
-				}
-			}
-		}
-	}
+    });
 
-});
+
+    let path = d3.geoPath().projection(projection);
+
+    let url = "https://gist.githubusercontent.com/mbostock/4090846/raw/d534aba169207548a8a3d670c9c2cc719ff05c47/world-50m.json";
+
+    d3.json(url, function(error, world) {
+      if (error) throw error;
+
+      mappa.selectAll("path")
+      .data(topojson.feature(world, world.objects.countries).features)
+      .enter().append("path")
+      .attr("d", path)
+      .attr("fill", "#aaaa88")
+
+      confini.selectAll("path")
+      .data(topojson.feature(world, world.objects.countries).features)
+      .enter().append("path")
+      .attr("d", path)
+      .attr("fill", "none")
+      .attr("stroke", "red")
+      .attr("stroke-width", .5)
+
+  });
+
+    d3.tsv("route-west-2.tsv", function(error, data) {
+        if (error) throw error;
+
+        let line = d3.line()
+        .x(function(d) { return projection([d.lon, d.lat])[0]; })  
+        .y(function(d) { return projection([d.lon, d.lat])[1]; })
+        .curve(d3.curveLinear);
+
+        route.append("path")
+        .data([data])
+        .attr("d", line)
+        // .attr("d", line(data))
+        .attr("fill", "none")
+        .attr("stroke", "blue");
+
+    });
+
+    d3.tsv("line.tsv", function(error, data) {
+        if (error) throw error;
+
+        cities.selectAll("circle")
+        .data(data)
+        .enter()
+        .append("circle")
+        .attr("cx", d=> { return projection([d.lon, d.lat])[0]; })
+        .attr("cy", d=> { return projection([d.lon, d.lat])[1]; })
+        .attr("r", 3)
+        .attr("fill", "blue")
+
+        cities.selectAll("text")
+        .data(data)
+        .enter()
+        .append("text")
+        .attr("x", d=> { return projection([d.lon, d.lat])[0]; })
+        .attr("y", d=> { return projection([d.lon, d.lat])[1] + 5; })
+        .text(d=> { return d.city; })
+        .attr("fill", "black")
+        .style("text-anchor", "middle")
+        .style("alignment-baseline", "hanging")
+        .classed("label", true)
+
+    });

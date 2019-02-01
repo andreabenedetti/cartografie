@@ -38,7 +38,7 @@
 }
 
 body {
-	background: #f9f9f9;
+	background: #bbdddd;
 	color: black;
 	font-weight: 400;
 	padding-top: 2rem;
@@ -62,17 +62,13 @@ a:hover {
 
 .rect {
 	transition: opacity 0.2s ease;
-}
-
-.rect:hover {
-	cursor: pointer;
+	filter: blur();
 }
 
 .label {
 	pointer-events: none;
-	text-transform: uppercase;
-	font-size: 0.7rem;
-	fill: var(--dark);
+	font-size: 0.8rem;
+	fill: #000000;
 }
 
 #tooltip {
