@@ -43,10 +43,10 @@ size.domain(d3.extent(data, function(d) {
     	let simulation = d3.forceSimulation()
     	.force("cx", d3.forceX(function(d) { return d.x0;}))
     	.force("cy", d3.forceY(function(d) { return d.y0; }))
-    	.force("collide", d3.forceCollide(2)
-        .iterations(10))
-        .alphaDecay(0)
-        .alpha(0.5)
+    	// .force("collide", d3.forceCollide(2)
+     //    .iterations(10))
+     //    .alphaDecay(0)
+     //    .alpha(0.5)
     	.nodes(nodes)
     	.on("tick", tick);
 
